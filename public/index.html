@@ -5,141 +5,321 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Capt DM — личный кабинет</title>
 <style>
-:root{--red:#b80000;--red2:#e03a1e;--bg:#e8ebf1;--card:#fff;--tx:#1a2236;--mut:#6b7488;--line:#d6dbe5;--blue:#2457c5}
+:root{--red:#c40000;--red2:#ee4a2f;--bg:#e8ebf1;--card:#fff;--tx:#1a2236;--mut:#6b7488;--line:#dfe3ea;--blue:#2457c5;--ico:#ee4a2f}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{background:linear-gradient(180deg,#d30000,#a80000);color:#fff;padding:22px 32px 14px;font-size:26px;font-weight:700}
-nav{background:#fafbfd;border-bottom:1px solid var(--line);display:flex;gap:4px;padding:0 24px;overflow-x:auto}
-nav button{background:none;border:0;border-bottom:2px solid transparent;padding:18px 16px;font:inherit;color:#33405a;cursor:pointer;white-space:nowrap}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer}
+.hide{display:none!important}
+header{background:radial-gradient(120% 220% at 85% 0%,#e00000 0%,#b30000 55%,#8c0000 100%);color:#fff;padding:0 16px}
+header .in{max-width:1000px;margin:0 auto;height:76px;display:flex;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.01em}
+header .brand{font-size:12px;font-weight:700;letter-spacing:.14em;opacity:.85}
+nav{background:#fafbfd;border-bottom:1px solid var(--line);padding:0 16px}
+nav .in{max-width:1000px;margin:0 auto;display:flex;gap:4px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:2px solid transparent;padding:17px 14px 15px;color:#33405a;white-space:nowrap}
 nav button.on{color:var(--blue);border-color:var(--blue)}
 nav .sp{flex:1}
-main{max-width:960px;margin:28px auto;padding:0 16px}
-.card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 1px 4px rgba(20,30,60,.08)}
-.hide{display:none!important}
-.login{max-width:360px;margin:40px auto}
-.login h2{margin:0 0 14px}
-input[type=text],input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;margin-bottom:10px}
-.btn{background:var(--red2);color:#fff;border:0;border-radius:20px;padding:10px 20px;font:inherit;font-weight:600;cursor:pointer}
+main{max-width:1000px;margin:28px auto 60px;padding:0 16px}
+.card{background:var(--card);border-radius:16px;padding:22px;box-shadow:0 1px 4px rgba(20,30,60,.08)}
+.btn{background:var(--red2);color:#fff;border:0;border-radius:10px;padding:11px 22px;font-weight:600}
+.btn:hover{filter:brightness(1.05)}
+.btn.grey{background:#c9ccd2;color:#fff;cursor:default}
 .btn.sec{background:#e9edf5;color:#33405a}
-.btn:disabled{opacity:.5;cursor:default}
-.err{color:#c0262b;margin:6px 0;min-height:18px}
-.grid{display:grid;grid-template-columns:240px 1fr;gap:24px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}}
-.ava{aspect-ratio:1;background:#a9b6c8;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:72px;font-weight:700;margin-bottom:12px}
-.kv{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
-.kv span:first-child{color:var(--tx)}.kv span:last-child{color:var(--mut)}
-.kv:last-child{border:0}
-h3{margin:0 0 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);text-align:center}
-.sub{display:flex;gap:8px;margin-bottom:16px}
-.sub button{border:0;background:#e9edf5;border-radius:18px;padding:8px 16px;font:inherit;cursor:pointer}
-.sub button.on{background:var(--red2);color:#fff}
-.tr{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
-.tr:last-child{border:0}
+.btn:disabled{opacity:.55;cursor:default}
+input[type=text],input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;margin-bottom:10px;background:#fff}
+input:focus{outline:2px solid #ee4a2f33;border-color:var(--red2)}
+.err{color:#c0262b;min-height:20px;margin:4px 0}
+.ok{color:#1d8a45;min-height:20px;margin:4px 0}
+
+/* вход */
+.login{max-width:380px;margin:30px auto}
+.login h2{margin:0 0 6px;font-size:22px}
+.login p{color:var(--mut);margin:0 0 16px}
+.login .btn{width:100%}
+
+/* персонаж */
+.grid{display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:start}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.side{padding:8px}
+.photo{aspect-ratio:3/4;border-radius:10px;background:#a9b6c8 repeating-linear-gradient(45deg,#ffffff0a 0 6px,transparent 6px 12px);display:flex;align-items:center;justify-content:center}
+.photo svg{width:62%;fill:#dfe5ee}
+.side .kv{padding:12px 10px}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.kv:last-child{border-bottom:0}
+.kv .k{display:flex;align-items:center;gap:12px}
+.kv .k svg{width:15px;height:15px;fill:var(--ico);flex:none}
+.kv .v{color:#3b4458;text-align:right}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.head b{font-size:16px}
+.chip{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:#dfe8fb;border-radius:20px;padding:4px 10px}
+.head .st{margin-left:auto;font-weight:600;display:flex;align-items:center;gap:6px}
+.head .st::before{content:"";width:7px;height:7px;border-radius:50%;background:#e23b3b}
+.sep{display:flex;align-items:center;gap:14px;margin:10px 0 4px;color:#3b4458;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.sep::before,.sep::after{content:"";flex:1;height:1px;background:#c6ccd8}
+.pill{background:var(--red2);color:#fff;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;margin-right:10px}
+
+/* аудиозаписи */
+.hero{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:28px 28px;border-radius:18px;background:#fff;box-shadow:0 1px 4px rgba(20,30,60,.08)}
+.hero h2{margin:0 0 8px;font-size:18px}
+.hero p{margin:0;color:var(--mut);max-width:420px}
+.hero .act{text-align:center;min-width:180px}
+.hero .act .btn{width:100%;padding:13px 22px}
+.hero .why{margin-top:10px;color:var(--mut);font-size:12.5px}
+.hero .why b{color:#e23b3b;margin-right:4px}
+.cols{display:grid;grid-template-columns:1fr 250px;gap:24px;margin-top:30px;align-items:start}
+@media(max-width:720px){.hero{flex-direction:column;align-items:stretch}.cols{grid-template-columns:1fr}}
+.lbl{color:#4a5368;margin-bottom:10px}
+.tr{display:flex;align-items:center;gap:12px;padding:10px 12px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(20,30,60,.06)}
 .tr .t{flex:1;min-width:0}
 .tr .t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tr .t small{color:var(--mut)}
-.ic{background:#e9edf5;border:0;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:14px}
+.tr audio{display:block;width:100%;height:32px;margin-top:6px}
+.ic{background:#eef1f6;border:0;border-radius:50%;width:34px;height:34px;flex:none;color:#33405a}
+.ic.play{background:var(--red2);color:#fff}
 .ic.del{color:#c0262b}
-.drop{border:2px dashed #b7c0d2;border-radius:14px;padding:30px;text-align:center;color:var(--mut);cursor:pointer;margin-bottom:12px}
-.drop.over{border-color:var(--red2);color:var(--red2)}
-.bar{height:6px;background:#e1e6ef;border-radius:3px;overflow:hidden;margin:6px 0 14px}
+.empty{color:var(--mut);padding:18px 4px}
+.info{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(20,30,60,.08);display:flex;gap:12px}
+.info svg{width:16px;height:16px;fill:var(--ico);flex:none;margin-top:2px}
+.info b{display:block;color:var(--red2);margin-bottom:4px}
+.info span{font-size:12px;color:#4a5368}
+.quota{font-size:12px;color:var(--mut);margin-top:6px}
+.bar{height:6px;background:#e1e6ef;border-radius:3px;overflow:hidden;margin-top:6px}
 .bar i{display:block;height:100%;background:var(--red2)}
-audio{width:100%;margin-top:8px}
-.empty{color:var(--mut);text-align:center;padding:30px 0}
+
+/* окно загрузки */
+.dlg{position:fixed;inset:0;background:#1a223680;display:flex;align-items:center;justify-content:center;padding:16px;z-index:5}
+.dlg .card{width:100%;max-width:440px}
+.dlg h3{margin:0 0 14px;font-size:18px}
+.drop{border:2px dashed #b7c0d2;border-radius:14px;padding:26px 16px;text-align:center;color:var(--mut);cursor:pointer;margin-bottom:12px;word-break:break-all}
+.drop.over{border-color:var(--red2);color:var(--red2)}
+.row2{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+
+/* настройки */
+.set{max-width:440px}
+.set h2{margin:0 0 4px;font-size:18px}
+.set p{color:var(--mut);margin:0 0 16px}
 </style>
 </head>
 <body>
-<header>Мой аккаунт</header>
-<nav id="nav" class="hide">
+<header><div class="in"><h1>Мой аккаунт</h1><span class="brand">CAPT DM</span></div></header>
+<nav id="nav" class="hide"><div class="in">
   <button data-tab="profile" class="on">Персонаж</button>
+  <button data-tab="settings">Настройки</button>
   <button data-tab="audio">Аудиозаписи</button>
   <span class="sp"></span>
   <button id="logout">Выйти</button>
-</nav>
+</div></nav>
+
 <main>
   <section id="login" class="card login">
-    <h2>Вход</h2>
-    <p style="color:var(--mut);margin-top:0">Используйте ник и пароль от вашего аккаунта на сервере.</p>
-    <input id="n" type="text" placeholder="Ник в игре" autocomplete="username">
-    <input id="p" type="password" placeholder="Пароль" autocomplete="current-password">
+    <h2>Вход в кабинет</h2>
+    <p>Ник и пароль от вашего аккаунта на сервере.</p>
+    <input id="n" type="text" placeholder="Ник в игре" autocomplete="username" maxlength="24">
+    <input id="p" type="password" placeholder="Пароль" autocomplete="current-password" maxlength="64">
     <div class="err" id="lerr"></div>
     <button class="btn" id="lgo">Войти</button>
   </section>
 
   <section id="profile" class="grid hide">
-    <div class="card"><div class="ava" id="ava">?</div>
-      <div class="kv"><span>Треков</span><span id="s-tr">0</span></div>
-      <div class="kv"><span>Занято</span><span id="s-used">0</span></div>
+    <div class="card side">
+      <div class="photo"><svg viewBox="0 0 24 24"><path d="M9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3zm3 4.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z"/></svg></div>
+      <div class="kv"><span>Номер аккаунта</span><span class="v" id="s-id">—</span></div>
+      <div class="kv"><span>Администратор</span><span class="v" id="s-adm">Нет</span></div>
+      <div class="kv"><span>Донат</span><span class="v" id="s-don">0</span></div>
     </div>
-    <div class="card">
-      <div style="font-size:18px;font-weight:700;margin-bottom:14px" id="pname"></div>
-      <h3>Общая статистика</h3>
-      <div class="kv"><span>ELO</span><span id="s-elo"></span></div>
-      <div class="kv"><span>Победы / поражения</span><span id="s-wl"></span></div>
-      <div class="kv"><span>Убийства / смерти</span><span id="s-kd"></span></div>
-      <div class="kv"><span>Дата регистрации</span><span id="s-reg"></span></div>
+    <div>
+      <div class="head"><b id="pname"></b><span class="chip">Capt DM</span><span class="st" id="s-last"></span></div>
+      <div class="sep">Общая статистика</div>
+      <div id="stats"></div>
+    </div>
+  </section>
+
+  <section id="settings" class="hide">
+    <div class="card set">
+      <h2>Смена пароля</h2>
+      <p>Пароль меняется и для входа в игру. После смены используйте новый пароль везде.</p>
+      <input id="po" type="password" placeholder="Текущий пароль" autocomplete="current-password" maxlength="64">
+      <input id="pn" type="password" placeholder="Новый пароль (4–32 символа)" autocomplete="new-password" maxlength="32">
+      <input id="pn2" type="password" placeholder="Повторите новый пароль" autocomplete="new-password" maxlength="32">
+      <div class="err" id="perr"></div><div class="ok" id="pok"></div>
+      <button class="btn" id="pgo">Сменить пароль</button>
     </div>
   </section>
 
   <section id="audio" class="hide">
-    <div class="card">
-      <div class="sub"><button data-sub="mine" class="on">Ваша музыка</button><button data-sub="up">Загруженная музыка</button></div>
-      <div id="mine"></div>
-      <div id="up" class="hide">
-        <div class="drop" id="drop">Перетащите MP3/OGG сюда или нажмите, чтобы выбрать<input id="file" type="file" accept=".mp3,.ogg,audio/mpeg,audio/ogg" class="hide"></div>
-        <input id="title" type="text" placeholder="Название трека (необязательно)" maxlength="60">
-        <div class="bar"><i id="used-bar" style="width:0"></i></div>
-        <div class="err" id="uerr"></div>
-        <button class="btn" id="ugo" disabled>Загрузить</button>
+    <div class="hero">
+      <div><h2>Ваша музыка</h2><p>После загрузки аудиозаписи она станет доступна в аудиосистеме вашего транспорта (клавиша C в машине).</p></div>
+      <div class="act"><button class="btn" id="upbtn">Загрузить музыку</button><div class="why hide" id="why"><b>✕</b>Вы не можете загрузить музыку</div></div>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="lbl">Загруженная музыка</div>
+        <div id="list"></div>
+        <div class="quota" id="quota"></div><div class="bar"><i id="qbar" style="width:0"></i></div>
+      </div>
+      <div>
+        <div class="info"><svg viewBox="0 0 24 24"><path d="M12 3v10.6A4 4 0 1 0 14 17V7h4V3z"/></svg><div><b>Музыкальный проигрыватель</b><span>Для воспроизведения музыки в игре в вашем транспорте должна быть установлена аудиосистема.</span></div></div>
+        <div class="info"><svg viewBox="0 0 24 24"><path d="M12 3v10.6A4 4 0 1 0 14 17V7h4V3z"/></svg><div><b>Загрузка трека</b><span>Для загрузки трека необходимо иметь аудиосистему: сядьте в игре за руль и введите /makeaudio. Форматы MP3 и OGG.</span></div></div>
       </div>
     </div>
   </section>
 </main>
+
+<div class="dlg hide" id="dlg"><div class="card">
+  <h3>Загрузка трека</h3>
+  <div class="drop" id="drop"><span id="dropt">Перетащите MP3/OGG сюда или нажмите, чтобы выбрать</span><input id="file" type="file" accept=".mp3,.ogg,audio/mpeg,audio/ogg" class="hide"></div>
+  <input id="title" type="text" placeholder="Название трека" maxlength="60">
+  <input id="artist" type="text" placeholder="Исполнитель" maxlength="48">
+  <div class="err" id="uerr"></div>
+  <div class="row2"><button class="btn sec" id="ucancel">Отмена</button><button class="btn" id="ugo" disabled>Загрузить</button></div>
+</div></div>
+
 <script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const mb=b=>(b/1048576).toFixed(1)+' МБ';
-let me=null,picked=null;
-async function api(u,o){const r=await fetch(u,o);let j={};try{j=await r.json()}catch{}if(!r.ok)throw new Error(j.error||'Ошибка');return j}
-function tab(t){$$('#nav [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));['profile','audio'].forEach(x=>$('#'+x).classList.toggle('hide',x!==t));if(t==='audio')loadTracks()}
-function sub(s){$$('.sub button').forEach(b=>b.classList.toggle('on',b.dataset.sub===s));$('#mine').classList.toggle('hide',s!=='mine');$('#up').classList.toggle('hide',s!=='up')}
-async function loadMe(){
-  try{me=await api('/api/me')}catch{me=null;$('#login').classList.remove('hide');$('#nav').classList.add('hide');['profile','audio'].forEach(x=>$('#'+x).classList.add('hide'));return}
-  $('#login').classList.add('hide');$('#nav').classList.remove('hide');
-  $('#ava').textContent=me.name[0].toUpperCase();$('#pname').textContent=me.name;
-  $('#s-elo').textContent=me.elo;$('#s-wl').textContent=me.wins+' / '+me.losses;$('#s-kd').textContent=me.kills+' / '+me.deaths;
-  $('#s-reg').textContent=me.reg_date?new Date(me.reg_date).toLocaleDateString('ru'):'—';
-  $('#s-tr').textContent=me.tracks+' из '+me.limits.maxTracks;$('#s-used').textContent=mb(me.used)+' из '+mb(me.limits.maxTotal);
-  $('#used-bar').style.width=Math.min(100,me.used/me.limits.maxTotal*100)+'%';
-  tab('profile');
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mb = b => (b / 1048576).toFixed(1) + ' МБ';
+const num = n => String(n | 0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+const DEMO = new URLSearchParams(location.search).has('demo');
+let me = null, picked = null;
+
+async function api(u, o) {
+  if (DEMO) return demoApi(u, o);
+  const r = await fetch(u, o); let j = {};
+  try { j = await r.json(); } catch {}
+  if (!r.ok) throw new Error(j.error || 'Ошибка');
+  return j;
 }
-async function loadTracks(){
-  const l=await api('/api/tracks'),box=$('#mine');
-  if(!l.length){box.innerHTML='<div class="empty">Пока нет треков. Загрузите музыку на вкладке «Загруженная музыка».</div>';return}
-  box.innerHTML=l.map(t=>`<div class="tr" data-id="${t.id}"><button class="ic play" title="Слушать">▶</button><div class="t"><b>${esc(t.title)}</b><small>${mb(t.size)}</small></div><button class="ic ren" title="Переименовать">✎</button><button class="ic del" title="Удалить">✕</button></div>`).join('');
-  $$('#mine .tr').forEach((row,i)=>{const t=l[i];
-    row.querySelector('.play').onclick=()=>{const old=row.querySelector('audio');if(old){old.remove();return}$$('#mine audio').forEach(a=>a.remove());const a=document.createElement('audio');a.controls=true;a.autoplay=true;a.src='/files/'+t.file;row.querySelector('.t').appendChild(a)};
-    row.querySelector('.ren').onclick=async()=>{const n=prompt('Новое название',t.title);if(!n)return;await api('/api/tracks/'+t.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:n})});loadTracks()};
-    row.querySelector('.del').onclick=async()=>{if(!confirm('Удалить «'+t.title+'»?'))return;await api('/api/tracks/'+t.id,{method:'DELETE'});loadTracks();loadMe()};
+const IC = {
+  star: '<path d="M12 2l3 6.9 7.5.7-5.7 5 1.7 7.4L12 18l-6.5 4 1.7-7.4-5.7-5 7.5-.7z"/>',
+  cup: '<path d="M6 3h12v3h3v3a5 5 0 0 1-5 5 6 6 0 0 1-3 2v3h4v3H7v-3h4v-3a6 6 0 0 1-3-2 5 5 0 0 1-5-5V6h3zm12 5v4a3 3 0 0 0 1-2V8zM6 8H5v2a3 3 0 0 0 1 2z"/>',
+  aim: '<path d="M11 2h2v3.1A7 7 0 0 1 18.9 11H22v2h-3.1A7 7 0 0 1 13 18.9V22h-2v-3.1A7 7 0 0 1 5.1 13H2v-2h3.1A7 7 0 0 1 11 5.1zm1 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/>',
+  rub: '<path d="M8 3h6a5 5 0 0 1 0 10h-4v2h5v2h-5v4H8v-4H6v-2h2v-2H6v-2h2zm2 2v6h4a3 3 0 0 0 0-6z"/>',
+  car: '<path d="M5 11l2-5h10l2 5h1a1 1 0 0 1 1 1v6h-2v2h-3v-2H8v2H5v-2H3v-6a1 1 0 0 1 1-1zm2.3-1h9.4l-1.2-3H8.5zM6.5 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>',
+  heart: '<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',
+  user: '<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5c0-3-4-5.5-9-5.5z"/>',
+  cal: '<path d="M7 2h2v2h6V2h2v2h3v18H4V4h3zm11 7H6v11h12z"/>'
+};
+const row = (ic, k, v) => '<div class="kv"><span class="k"><svg viewBox="0 0 24 24">' + IC[ic] + '</svg>' + k + '</span><span class="v">' + v + '</span></div>';
+const date = d => d ? new Date(d).toLocaleString('ru', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+
+function tab(t) {
+  $$('#nav [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  ['profile', 'settings', 'audio'].forEach(x => $('#' + x).classList.toggle('hide', x !== t));
+  if (t === 'audio') loadTracks();
+  try { localStorage.setItem('capt_tab', t); } catch {}
+}
+async function loadMe(keepTab) {
+  try { me = await api('/api/me'); }
+  catch { me = null; $('#login').classList.remove('hide'); $('#nav').classList.add('hide'); ['profile', 'settings', 'audio'].forEach(x => $('#' + x).classList.add('hide')); return; }
+  $('#login').classList.add('hide'); $('#nav').classList.remove('hide');
+  $('#pname').textContent = me.name;
+  $('#s-id').textContent = '#' + me.id;
+  $('#s-adm').textContent = me.admin ? me.admin + ' уровень' : 'Нет';
+  $('#s-don').textContent = num(me.donate);
+  $('#s-last').textContent = me.last_login ? 'Был в игре ' + new Date(me.last_login).toLocaleDateString('ru') : 'Не в сети';
+  const games = (me.wins | 0) + (me.losses | 0), kd = me.deaths ? (me.kills / me.deaths).toFixed(2) : (me.kills | 0).toFixed(2);
+  $('#stats').innerHTML =
+    row('star', 'Рейтинг ELO', me.elo) +
+    row('cup', 'Победы / поражения', me.wins + ' / ' + me.losses + (games ? ' (' + Math.round(me.wins / games * 100) + '%)' : '')) +
+    row('aim', 'Убийства / смерти', me.kills + ' / ' + me.deaths + ' · K/D ' + kd) +
+    row('rub', 'Деньги', num(me.money) + ' рублей') +
+    row('car', 'Аудиосистема', me.audio ? 'Установлена' : '<span class="pill">/makeaudio</span>Нет') +
+    row('heart', 'Фитнес-навыки', me.fitness ? 'Куплены' : 'Нет') +
+    row('user', 'Скин', me.skin) +
+    row('cal', 'Дата регистрации', date(me.reg_date));
+  $('#quota').textContent = 'Треков: ' + me.tracks + ' из ' + me.limits.maxTracks + ' · занято ' + mb(me.used) + ' из ' + mb(me.limits.maxTotal);
+  $('#qbar').style.width = Math.min(100, me.used / me.limits.maxTotal * 100) + '%';
+  const can = !!me.audio && me.tracks < me.limits.maxTracks;
+  $('#upbtn').className = can ? 'btn' : 'btn grey';
+  $('#why').classList.toggle('hide', can);
+  $('#why').lastChild.textContent = !me.audio ? 'Вы не можете загрузить музыку' : 'Достигнут лимит треков';
+  let t = 'profile'; try { t = localStorage.getItem('capt_tab') || t; } catch {}
+  if (!keepTab) tab(t);
+}
+async function loadTracks() {
+  let l = [];
+  try { l = await api('/api/tracks'); } catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; return; }
+  if (!l.length) { $('#list').innerHTML = '<div class="empty">Здесь появятся ваши треки.</div>'; return; }
+  $('#list').innerHTML = l.map(t => '<div class="tr"><button class="ic play" title="Слушать">▶</button><div class="t"><b>' + esc(t.title) + '</b><small>'
+    + esc(t.artist || 'Исполнитель не указан') + ' · ' + mb(t.size) + '</small></div><button class="ic ren" title="Изменить">✎</button><button class="ic del" title="Удалить">✕</button></div>').join('');
+  $$('#list .tr').forEach((el, i) => {
+    const t = l[i];
+    el.querySelector('.play').onclick = () => {
+      const old = el.querySelector('audio'); if (old) { old.remove(); return; }
+      $$('#list audio').forEach(a => a.remove());
+      const a = document.createElement('audio'); a.controls = true; a.autoplay = true; a.src = '/files/' + t.file;
+      el.querySelector('.t').appendChild(a);
+    };
+    el.querySelector('.ren').onclick = async () => {
+      const title = prompt('Название трека', t.title); if (title === null || !title.trim()) return;
+      const artist = prompt('Исполнитель', t.artist || ''); if (artist === null) return;
+      try { await api('/api/tracks/' + t.id, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, artist }) }); loadTracks(); }
+      catch (e) { alert(e.message); }
+    };
+    el.querySelector('.del').onclick = async () => {
+      if (!confirm('Удалить «' + t.title + '»?')) return;
+      try { await api('/api/tracks/' + t.id, { method: 'DELETE' }); await loadMe(true); loadTracks(); } catch (e) { alert(e.message); }
+    };
   });
 }
-$('#lgo').onclick=async()=>{$('#lerr').textContent='';try{await api('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:$('#n').value,password:$('#p').value})});$('#p').value='';loadMe()}catch(e){$('#lerr').textContent=e.message}};
-$('#p').onkeydown=e=>{if(e.key==='Enter')$('#lgo').click()};
-$('#logout').onclick=async()=>{await api('/api/logout',{method:'POST'});loadMe()};
-$$('#nav [data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
-$$('.sub button').forEach(b=>b.onclick=()=>sub(b.dataset.sub));
-const drop=$('#drop'),fi=$('#file');
-function pick(f){picked=f||null;drop.firstChild.textContent=f?f.name+' ('+mb(f.size)+')':'Перетащите MP3/OGG сюда или нажмите, чтобы выбрать';$('#ugo').disabled=!f}
-drop.onclick=()=>fi.click();fi.onchange=()=>pick(fi.files[0]);
-drop.ondragover=e=>{e.preventDefault();drop.classList.add('over')};drop.ondragleave=()=>drop.classList.remove('over');
-drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');pick(e.dataTransfer.files[0])};
-$('#ugo').onclick=async()=>{
-  $('#uerr').textContent='';if(!picked)return;$('#ugo').disabled=true;$('#ugo').textContent='Загрузка…';
-  const fd=new FormData();fd.append('title',$('#title').value);fd.append('file',picked);
-  try{await api('/api/tracks',{method:'POST',body:fd});pick(null);fi.value='';$('#title').value='';await loadMe();sub('mine');tab('audio')}
-  catch(e){$('#uerr').textContent=e.message}
-  $('#ugo').textContent='Загрузить';$('#ugo').disabled=!picked;
+
+$('#lgo').onclick = async () => {
+  $('#lerr').textContent = '';
+  try {
+    await api('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: $('#n').value.trim(), password: $('#p').value }) });
+    $('#p').value = ''; loadMe();
+  } catch (e) { $('#lerr').textContent = e.message; }
 };
+$('#p').onkeydown = e => { if (e.key === 'Enter') $('#lgo').click(); };
+$('#logout').onclick = async () => { await api('/api/logout', { method: 'POST' }); loadMe(); };
+$$('#nav [data-tab]').forEach(b => b.onclick = () => tab(b.dataset.tab));
+
+$('#pgo').onclick = async () => {
+  $('#perr').textContent = ''; $('#pok').textContent = '';
+  if ($('#pn').value !== $('#pn2').value) { $('#perr').textContent = 'Новые пароли не совпадают'; return; }
+  try {
+    await api('/api/password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ old: $('#po').value, next: $('#pn').value }) });
+    ['#po', '#pn', '#pn2'].forEach(s => $(s).value = ''); $('#pok').textContent = 'Пароль изменён';
+  } catch (e) { $('#perr').textContent = e.message; }
+};
+
+// загрузка трека
+const drop = $('#drop'), fi = $('#file');
+function pick(f) {
+  picked = f || null;
+  $('#dropt').textContent = f ? f.name + ' (' + mb(f.size) + ')' : 'Перетащите MP3/OGG сюда или нажмите, чтобы выбрать';
+  if (f && !$('#title').value) {
+    const base = f.name.replace(/\.[^.]+$/, ''), m = base.split(/\s+[-–—]\s+/);
+    if (m.length > 1) { $('#artist').value = $('#artist').value || m[0]; $('#title').value = m.slice(1).join(' - '); }
+    else $('#title').value = base;
+  }
+  $('#ugo').disabled = !f;
+}
+$('#upbtn').onclick = () => { if (!me || $('#upbtn').classList.contains('grey')) return; $('#uerr').textContent = ''; $('#dlg').classList.remove('hide'); };
+$('#ucancel').onclick = () => { $('#dlg').classList.add('hide'); pick(null); fi.value = ''; $('#title').value = ''; $('#artist').value = ''; };
+drop.onclick = () => fi.click(); fi.onchange = () => pick(fi.files[0]);
+drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+drop.ondragleave = () => drop.classList.remove('over');
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); pick(e.dataTransfer.files[0]); };
+$('#ugo').onclick = async () => {
+  $('#uerr').textContent = ''; if (!picked) return;
+  $('#ugo').disabled = true; $('#ugo').textContent = 'Загрузка…';
+  const fd = new FormData(); fd.append('title', $('#title').value); fd.append('artist', $('#artist').value); fd.append('file', picked);
+  try { await api('/api/tracks', { method: 'POST', body: fd }); $('#ucancel').click(); await loadMe(true); tab('audio'); }
+  catch (e) { $('#uerr').textContent = e.message; }
+  $('#ugo').textContent = 'Загрузить'; $('#ugo').disabled = !picked;
+};
+
+// ?demo — просмотр страницы без сервера
+function demoApi(u) {
+  const tracks = [{ id: 7, title: 'Газ в пол', artist: 'Kizaru', file: '', size: 7340032 }, { id: 5, title: 'Monster Trakk', artist: 'Obladaet', file: '', size: 5242880 }];
+  const audio = new URLSearchParams(location.search).get('demo') !== 'noaudio';
+  if (u === '/api/me') return Promise.resolve({ id: 1250, name: 'Mikhail_Belin', elo: 1240, wins: 18, losses: 9, kills: 142, deaths: 96, money: 815093, skin: 14, donate: 30, fitness: 1, admin: 0, audio: audio ? 1 : 0,
+    reg_date: '2026-10-28T16:00:00', last_login: '2026-10-30T18:00:00', tracks: audio ? 2 : 0, used: 12582912, limits: { maxTracks: 20, maxTotal: 314572800, maxFile: 26214400 } });
+  if (u === '/api/tracks') return Promise.resolve(audio ? tracks : []);
+  return Promise.resolve({ ok: true });
+}
 loadMe();
 </script>
 </body>
