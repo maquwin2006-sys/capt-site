@@ -302,12 +302,38 @@ drop.onclick = () => fi.click(); fi.onchange = () => pick(fi.files[0]);
 drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
 drop.ondragleave = () => drop.classList.remove('over');
 drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); pick(e.dataTransfer.files[0]); };
+// Файл уходит из браузера прямо в хранилище Vercel Blob (сервер выдаёт только токен),
+// потом сервер проверяет его и записывает трек в базу.
+const BLOB_CLIENT = 'https://esm.sh/@vercel/blob@2.8.2/client';
 $('#ugo').onclick = async () => {
   $('#uerr').textContent = ''; if (!picked) return;
+  const ext = (picked.name.match(/\.(mp3|ogg)$/i) || [])[1];
+  if (!ext) { $('#uerr').textContent = 'Поддерживаются только MP3 и OGG'; return; }
+  if (picked.size > me.limits.maxFile) { $('#uerr').textContent = 'Файл больше ' + mb(me.limits.maxFile); return; }
   $('#ugo').disabled = true; $('#ugo').textContent = 'Загрузка…';
-  const fd = new FormData(); fd.append('title', $('#title').value); fd.append('artist', $('#artist').value); fd.append('file', picked);
-  try { await api('/api/tracks', { method: 'POST', body: fd }); $('#ucancel').click(); await loadMe(true); tab('audio'); }
-  catch (e) { $('#uerr').textContent = e.message; }
+  try {
+    const rnd = [...crypto.getRandomValues(new Uint8Array(8))].map(b => b.toString(16).padStart(2, '0')).join('');
+    let url;
+    if (DEMO) url = 'demo';
+    else {
+      const { upload } = await import(BLOB_CLIENT);
+      const blob = await upload(me.dir + rnd + '.' + ext.toLowerCase(), picked, {
+        access: 'public',
+        handleUploadUrl: '/api/upload',
+        contentType: ext.toLowerCase() === 'mp3' ? 'audio/mpeg' : 'audio/ogg',
+        multipart: picked.size > 8 * 1048576,
+        onUploadProgress: p => { $('#ugo').textContent = 'Загрузка ' + Math.round(p.percentage) + '%'; }
+      });
+      url = blob.url;
+    }
+    $('#ugo').textContent = 'Проверка…';
+    await api('/api/tracks/commit', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, title: $('#title').value, artist: $('#artist').value }) });
+    $('#ucancel').click(); await loadMe(true); tab('audio');
+  } catch (e) {
+    // ошибки сервера при выдаче токена приходят текстом из /api/upload
+    $('#uerr').textContent = (e && e.message || 'Ошибка загрузки').replace(/^Vercel Blob:\s*/i, '');
+  }
   $('#ugo').textContent = 'Загрузить'; $('#ugo').disabled = !picked;
 };
 
