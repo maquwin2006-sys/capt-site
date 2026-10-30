@@ -295,11 +295,13 @@ app.get('/files/:file', async (req, res) => {
   } catch (e) { fail(res, e); }
 });
 
-// Страница кабинета. На Vercel файлы из public/ отдаёт сам Vercel, здесь — для запуска через node.
-app.use(express.static(path.join(__dirname, 'public')));
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
-  if (err && !res.headersSent) res.redirect(302, '/index.html');
-}));
+// Страница кабинета. На Vercel файлы из public/ отдаёт сам Vercel (внутри функции их нет),
+// поэтому там корень просто ведёт на /index.html; при запуске через node — обычная раздача файлов.
+if (process.env.VERCEL) {
+  app.get('/', (req, res) => res.redirect(302, '/index.html'));
+} else {
+  app.use(express.static(path.join(__dirname, 'public')));
+}
 
 module.exports = app;
 
