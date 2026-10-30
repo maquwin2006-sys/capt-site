@@ -23,7 +23,10 @@ const cfg = {
   },
   // DB_SSL=1 — шифровать подключение к MySQL (обязательно, если база доступна из интернета)
   ssl: process.env.DB_SSL === '1',
-  secret: process.env.SESSION_SECRET || '',
+  // Ключ подписи входа. Если SESSION_SECRET не задан — выводится из секрета хранилища Blob,
+  // который Vercel добавляет сам при подключении хранилища (так настраивать вручную нечего).
+  secret: process.env.SESSION_SECRET || (process.env.BLOB_READ_WRITE_TOKEN
+    ? crypto.createHmac('sha256', process.env.BLOB_READ_WRITE_TOKEN).update('capt-session-key').digest('hex') : ''),
   maxFile: (+process.env.MAX_FILE_MB || 25) * 1024 * 1024,
   maxTracks: +process.env.MAX_TRACKS || 20,   // в игре меню показывает до 20 треков
   maxTotal: (+process.env.MAX_TOTAL_MB || 300) * 1024 * 1024,
@@ -32,8 +35,8 @@ const AUDIO_TYPES = ['audio/mpeg', 'audio/mp3', 'audio/ogg', 'application/ogg'];
 
 // Не падаем при запуске, а честно говорим, чего не хватает (на Vercel падение = FUNCTION_INVOCATION_FAILED)
 function configProblem() {
-  if (cfg.secret.length < 16) return 'Сайт не настроен: задайте SESSION_SECRET (минимум 16 символов).';
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return 'Сайт не настроен: подключите хранилище Vercel Blob (BLOB_READ_WRITE_TOKEN).';
+  if (!process.env.BLOB_READ_WRITE_TOKEN) return 'Сайт не настроен: подключите к проекту хранилище Vercel Blob (Storage → Blob).';
+  if (cfg.secret.length < 16) return 'SESSION_SECRET слишком короткий: нужно минимум 16 символов (или удалите его совсем).';
   return null;
 }
 

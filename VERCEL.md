@@ -45,7 +45,7 @@ Vercel → capt-site → **Settings → Environment Variables**:
 | `DB_PASS` | пароль из шага 2 |
 | `DB_NAME` | `capt` |
 | `DB_SSL` | `1` |
-| `SESSION_SECRET` | случайная строка от 16 символов (например, вывод `openssl rand -hex 32`) |
+| `SESSION_SECRET` | не обязательно: если не задан, ключ берётся из секрета Blob |
 | `BLOB_READ_WRITE_TOKEN` | появляется сам после шага 1 |
 
 После изменения переменных: **Deployments → … → Redeploy**.
@@ -53,7 +53,7 @@ Vercel → capt-site → **Settings → Environment Variables**:
 ## 4. Проверка
 
 - `https://capt-site.vercel.app` — страница входа. Если сайт не настроен, при входе будет понятная ошибка
-  («задайте SESSION_SECRET», «подключите хранилище Vercel Blob», «нет связи с базой игрового сервера»).
+  («подключите хранилище Vercel Blob», «нет связи с базой игрового сервера»).
 - Войти ником и паролем от игры → Аудиозаписи → загрузить трек (сначала в игре `/makeaudio` за рулём).
 - В игре: C в машине → трек в списке → играет.
 
