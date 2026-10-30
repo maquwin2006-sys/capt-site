@@ -1,5 +1,6 @@
 'use strict';
 // Сайт личного кабинета Capt DM: вход по нику/паролю игрового аккаунта, загрузка своей музыки.
+require('dotenv').config(); // подхватывает переменные из .env рядом с server.js (если файл есть)
 const express = require('express');
 const multer = require('multer');
 const mysql = require('mysql2/promise');
