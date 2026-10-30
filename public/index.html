@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capt DM — личный кабинет</title>
+<style>
+:root{--red:#b80000;--red2:#e03a1e;--bg:#e8ebf1;--card:#fff;--tx:#1a2236;--mut:#6b7488;--line:#d6dbe5;--blue:#2457c5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:linear-gradient(180deg,#d30000,#a80000);color:#fff;padding:22px 32px 14px;font-size:26px;font-weight:700}
+nav{background:#fafbfd;border-bottom:1px solid var(--line);display:flex;gap:4px;padding:0 24px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:2px solid transparent;padding:18px 16px;font:inherit;color:#33405a;cursor:pointer;white-space:nowrap}
+nav button.on{color:var(--blue);border-color:var(--blue)}
+nav .sp{flex:1}
+main{max-width:960px;margin:28px auto;padding:0 16px}
+.card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 1px 4px rgba(20,30,60,.08)}
+.hide{display:none!important}
+.login{max-width:360px;margin:40px auto}
+.login h2{margin:0 0 14px}
+input[type=text],input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;margin-bottom:10px}
+.btn{background:var(--red2);color:#fff;border:0;border-radius:20px;padding:10px 20px;font:inherit;font-weight:600;cursor:pointer}
+.btn.sec{background:#e9edf5;color:#33405a}
+.btn:disabled{opacity:.5;cursor:default}
+.err{color:#c0262b;margin:6px 0;min-height:18px}
+.grid{display:grid;grid-template-columns:240px 1fr;gap:24px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.ava{aspect-ratio:1;background:#a9b6c8;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:72px;font-weight:700;margin-bottom:12px}
+.kv{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.kv span:first-child{color:var(--tx)}.kv span:last-child{color:var(--mut)}
+.kv:last-child{border:0}
+h3{margin:0 0 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);text-align:center}
+.sub{display:flex;gap:8px;margin-bottom:16px}
+.sub button{border:0;background:#e9edf5;border-radius:18px;padding:8px 16px;font:inherit;cursor:pointer}
+.sub button.on{background:var(--red2);color:#fff}
+.tr{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.tr:last-child{border:0}
+.tr .t{flex:1;min-width:0}
+.tr .t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .t small{color:var(--mut)}
+.ic{background:#e9edf5;border:0;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:14px}
+.ic.del{color:#c0262b}
+.drop{border:2px dashed #b7c0d2;border-radius:14px;padding:30px;text-align:center;color:var(--mut);cursor:pointer;margin-bottom:12px}
+.drop.over{border-color:var(--red2);color:var(--red2)}
+.bar{height:6px;background:#e1e6ef;border-radius:3px;overflow:hidden;margin:6px 0 14px}
+.bar i{display:block;height:100%;background:var(--red2)}
+audio{width:100%;margin-top:8px}
+.empty{color:var(--mut);text-align:center;padding:30px 0}
+</style>
+</head>
+<body>
+<header>Мой аккаунт</header>
+<nav id="nav" class="hide">
+  <button data-tab="profile" class="on">Персонаж</button>
+  <button data-tab="audio">Аудиозаписи</button>
+  <span class="sp"></span>
+  <button id="logout">Выйти</button>
+</nav>
+<main>
+  <section id="login" class="card login">
+    <h2>Вход</h2>
+    <p style="color:var(--mut);margin-top:0">Используйте ник и пароль от вашего аккаунта на сервере.</p>
+    <input id="n" type="text" placeholder="Ник в игре" autocomplete="username">
+    <input id="p" type="password" placeholder="Пароль" autocomplete="current-password">
+    <div class="err" id="lerr"></div>
+    <button class="btn" id="lgo">Войти</button>
+  </section>
+
+  <section id="profile" class="grid hide">
+    <div class="card"><div class="ava" id="ava">?</div>
+      <div class="kv"><span>Треков</span><span id="s-tr">0</span></div>
+      <div class="kv"><span>Занято</span><span id="s-used">0</span></div>
+    </div>
+    <div class="card">
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px" id="pname"></div>
+      <h3>Общая статистика</h3>
+      <div class="kv"><span>ELO</span><span id="s-elo"></span></div>
+      <div class="kv"><span>Победы / поражения</span><span id="s-wl"></span></div>
+      <div class="kv"><span>Убийства / смерти</span><span id="s-kd"></span></div>
+      <div class="kv"><span>Дата регистрации</span><span id="s-reg"></span></div>
+    </div>
+  </section>
+
+  <section id="audio" class="hide">
+    <div class="card">
+      <div class="sub"><button data-sub="mine" class="on">Ваша музыка</button><button data-sub="up">Загруженная музыка</button></div>
+      <div id="mine"></div>
+      <div id="up" class="hide">
+        <div class="drop" id="drop">Перетащите MP3/OGG сюда или нажмите, чтобы выбрать<input id="file" type="file" accept=".mp3,.ogg,audio/mpeg,audio/ogg" class="hide"></div>
+        <input id="title" type="text" placeholder="Название трека (необязательно)" maxlength="60">
+        <div class="bar"><i id="used-bar" style="width:0"></i></div>
+        <div class="err" id="uerr"></div>
+        <button class="btn" id="ugo" disabled>Загрузить</button>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mb=b=>(b/1048576).toFixed(1)+' МБ';
+let me=null,picked=null;
+async function api(u,o){const r=await fetch(u,o);let j={};try{j=await r.json()}catch{}if(!r.ok)throw new Error(j.error||'Ошибка');return j}
+function tab(t){$$('#nav [data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));['profile','audio'].forEach(x=>$('#'+x).classList.toggle('hide',x!==t));if(t==='audio')loadTracks()}
+function sub(s){$$('.sub button').forEach(b=>b.classList.toggle('on',b.dataset.sub===s));$('#mine').classList.toggle('hide',s!=='mine');$('#up').classList.toggle('hide',s!=='up')}
+async function loadMe(){
+  try{me=await api('/api/me')}catch{me=null;$('#login').classList.remove('hide');$('#nav').classList.add('hide');['profile','audio'].forEach(x=>$('#'+x).classList.add('hide'));return}
+  $('#login').classList.add('hide');$('#nav').classList.remove('hide');
+  $('#ava').textContent=me.name[0].toUpperCase();$('#pname').textContent=me.name;
+  $('#s-elo').textContent=me.elo;$('#s-wl').textContent=me.wins+' / '+me.losses;$('#s-kd').textContent=me.kills+' / '+me.deaths;
+  $('#s-reg').textContent=me.reg_date?new Date(me.reg_date).toLocaleDateString('ru'):'—';
+  $('#s-tr').textContent=me.tracks+' из '+me.limits.maxTracks;$('#s-used').textContent=mb(me.used)+' из '+mb(me.limits.maxTotal);
+  $('#used-bar').style.width=Math.min(100,me.used/me.limits.maxTotal*100)+'%';
+  tab('profile');
+}
+async function loadTracks(){
+  const l=await api('/api/tracks'),box=$('#mine');
+  if(!l.length){box.innerHTML='<div class="empty">Пока нет треков. Загрузите музыку на вкладке «Загруженная музыка».</div>';return}
+  box.innerHTML=l.map(t=>`<div class="tr" data-id="${t.id}"><button class="ic play" title="Слушать">▶</button><div class="t"><b>${esc(t.title)}</b><small>${mb(t.size)}</small></div><button class="ic ren" title="Переименовать">✎</button><button class="ic del" title="Удалить">✕</button></div>`).join('');
+  $$('#mine .tr').forEach((row,i)=>{const t=l[i];
+    row.querySelector('.play').onclick=()=>{const old=row.querySelector('audio');if(old){old.remove();return}$$('#mine audio').forEach(a=>a.remove());const a=document.createElement('audio');a.controls=true;a.autoplay=true;a.src='/files/'+t.file;row.querySelector('.t').appendChild(a)};
+    row.querySelector('.ren').onclick=async()=>{const n=prompt('Новое название',t.title);if(!n)return;await api('/api/tracks/'+t.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:n})});loadTracks()};
+    row.querySelector('.del').onclick=async()=>{if(!confirm('Удалить «'+t.title+'»?'))return;await api('/api/tracks/'+t.id,{method:'DELETE'});loadTracks();loadMe()};
+  });
+}
+$('#lgo').onclick=async()=>{$('#lerr').textContent='';try{await api('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:$('#n').value,password:$('#p').value})});$('#p').value='';loadMe()}catch(e){$('#lerr').textContent=e.message}};
+$('#p').onkeydown=e=>{if(e.key==='Enter')$('#lgo').click()};
+$('#logout').onclick=async()=>{await api('/api/logout',{method:'POST'});loadMe()};
+$$('#nav [data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+$$('.sub button').forEach(b=>b.onclick=()=>sub(b.dataset.sub));
+const drop=$('#drop'),fi=$('#file');
+function pick(f){picked=f||null;drop.firstChild.textContent=f?f.name+' ('+mb(f.size)+')':'Перетащите MP3/OGG сюда или нажмите, чтобы выбрать';$('#ugo').disabled=!f}
+drop.onclick=()=>fi.click();fi.onchange=()=>pick(fi.files[0]);
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('over')};drop.ondragleave=()=>drop.classList.remove('over');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');pick(e.dataTransfer.files[0])};
+$('#ugo').onclick=async()=>{
+  $('#uerr').textContent='';if(!picked)return;$('#ugo').disabled=true;$('#ugo').textContent='Загрузка…';
+  const fd=new FormData();fd.append('title',$('#title').value);fd.append('file',picked);
+  try{await api('/api/tracks',{method:'POST',body:fd});pick(null);fi.value='';$('#title').value='';await loadMe();sub('mine');tab('audio')}
+  catch(e){$('#uerr').textContent=e.message}
+  $('#ugo').textContent='Загрузить';$('#ugo').disabled=!picked;
+};
+loadMe();
+</script>
+</body>
+</html>
