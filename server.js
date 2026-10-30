@@ -19,7 +19,7 @@ const cfg = {
   },
   secret: process.env.SESSION_SECRET || '',
   maxFile: (+process.env.MAX_FILE_MB || 25) * 1024 * 1024,
-  maxTracks: +process.env.MAX_TRACKS || 30,
+  maxTracks: +process.env.MAX_TRACKS || 20,   // в игре меню показывает до 20 треков
   maxTotal: (+process.env.MAX_TOTAL_MB || 300) * 1024 * 1024,
 };
 if (cfg.secret.length < 16) {
@@ -78,6 +78,7 @@ function tooMany(ip) {
   return a.length >= 10;
 }
 const noteTry = (ip) => tries.set(ip, [...(tries.get(ip) || []), Date.now()]);
+const cleanText = (v, max) => String(v || '').replace(/[\x00-\x1f]/g, '').trim().slice(0, max);
 
 const app = express();
 app.disable('x-powered-by');
@@ -115,7 +116,7 @@ app.post('/api/logout', (req, res) => {
 
 app.get('/api/me', auth, async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT name, elo, wins, losses, kills, deaths, reg_date, last_login FROM accounts WHERE name = ?', [req.user]);
+    const [rows] = await pool.query('SELECT id, name, elo, wins, losses, kills, deaths, money, skin, donate, fitness, admin, audio, reg_date, last_login FROM accounts WHERE name = ?', [req.user]);
     if (!rows[0]) return res.status(401).json({ error: 'Аккаунт не найден' });
     const [t] = await pool.query('SELECT COUNT(*) c, COALESCE(SUM(size),0) s FROM audio_tracks WHERE owner = ?', [req.user]);
     res.json({ ...rows[0], tracks: t[0].c, used: Number(t[0].s), limits: { maxTracks: cfg.maxTracks, maxTotal: cfg.maxTotal, maxFile: cfg.maxFile } });
@@ -124,7 +125,7 @@ app.get('/api/me', auth, async (req, res) => {
 
 app.get('/api/tracks', auth, async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT id, title, file, size, created FROM audio_tracks WHERE owner = ? ORDER BY id DESC', [req.user]);
+    const [rows] = await pool.query('SELECT id, title, artist, file, size, created FROM audio_tracks WHERE owner = ? ORDER BY id DESC', [req.user]);
     res.json(rows);
   } catch (e) { console.error(e); res.status(500).json({ error: 'Ошибка сервера' }); }
 });
@@ -154,6 +155,8 @@ app.post('/api/tracks', auth, (req, res) => {
     if (err) return res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? `Файл больше ${cfg.maxFile / 1048576} МБ` : 'Ошибка загрузки' });
     if (!f) return res.status(400).json({ error: 'Файл не выбран' });
     try {
+      const [acc] = await pool.query('SELECT audio FROM accounts WHERE name = ?', [req.user]);
+      if (!acc[0] || !acc[0].audio) { drop(); return res.status(403).json({ error: 'Сначала установите аудиосистему: в игре сядьте за руль и введите /makeaudio' }); }
       const ext = detectExt(f.path);
       if (!ext) { drop(); return res.status(400).json({ error: 'Поддерживаются только MP3 и OGG' }); }
       const [t] = await pool.query('SELECT COUNT(*) c, COALESCE(SUM(size),0) s FROM audio_tracks WHERE owner = ?', [req.user]);
@@ -161,19 +164,20 @@ app.post('/api/tracks', auth, (req, res) => {
       if (Number(t[0].s) + f.size > cfg.maxTotal) { drop(); return res.status(400).json({ error: 'Превышен лимит места' }); }
       let title = String(req.body.title || '').trim() || path.parse(Buffer.from(f.originalname, 'latin1').toString('utf8')).name;
       title = title.replace(/[\x00-\x1f]/g, '').slice(0, 60);
+      const artist = cleanText(req.body.artist, 48);
       const name = path.basename(f.path, '.tmp') + ext;
       fs.renameSync(f.path, path.join(UP, name));
-      const [r] = await pool.query('INSERT INTO audio_tracks (owner, title, file, size) VALUES (?, ?, ?, ?)', [req.user, title, name, f.size]);
+      const [r] = await pool.query('INSERT INTO audio_tracks (owner, title, artist, file, size) VALUES (?, ?, ?, ?, ?)', [req.user, title, artist, name, f.size]);
       res.json({ ok: true, id: r.insertId });
     } catch (e) { drop(); console.error(e); res.status(500).json({ error: 'Ошибка сервера' }); }
   });
 });
 
 app.patch('/api/tracks/:id', auth, async (req, res) => {
-  const title = String((req.body || {}).title || '').replace(/[\x00-\x1f]/g, '').trim().slice(0, 60);
+  const title = cleanText((req.body || {}).title, 60), artist = cleanText((req.body || {}).artist, 48);
   if (!title) return res.status(400).json({ error: 'Пустое название' });
   try {
-    const [r] = await pool.query('UPDATE audio_tracks SET title = ? WHERE id = ? AND owner = ?', [title, +req.params.id, req.user]);
+    const [r] = await pool.query('UPDATE audio_tracks SET title = ?, artist = ? WHERE id = ? AND owner = ?', [title, artist, +req.params.id, req.user]);
     res.json({ ok: r.affectedRows > 0 });
   } catch (e) { console.error(e); res.status(500).json({ error: 'Ошибка сервера' }); }
 });
@@ -184,6 +188,24 @@ app.delete('/api/tracks/:id', auth, async (req, res) => {
     if (!rows[0]) return res.status(404).json({ error: 'Не найдено' });
     await pool.query('DELETE FROM audio_tracks WHERE id = ? AND owner = ?', [+req.params.id, req.user]);
     fs.unlink(path.join(UP, path.basename(rows[0].file)), () => {});
+    res.json({ ok: true });
+  } catch (e) { console.error(e); res.status(500).json({ error: 'Ошибка сервера' }); }
+});
+
+// Смена пароля (тот же формат, что в игре: SHA256(пароль + соль), новая соль из 16 символов)
+app.post('/api/password', auth, async (req, res) => {
+  const ip = req.ip;
+  if (tooMany(ip)) return res.status(429).json({ error: 'Слишком много попыток. Подождите 10 минут.' });
+  const old = String((req.body || {}).old || ''), next = String((req.body || {}).next || '');
+  if (next.length < 4 || next.length > 32 || /\s/.test(next)) return res.status(400).json({ error: 'Новый пароль: от 4 до 32 символов, без пробелов' });
+  try {
+    const [rows] = await pool.query('SELECT pass, salt FROM accounts WHERE name = ?', [req.user]);
+    noteTry(ip);
+    const r = rows[0];
+    if (!r || gameHash(old, r.salt) !== String(r.pass).toUpperCase()) return res.status(401).json({ error: 'Текущий пароль указан неверно' });
+    const abc = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const salt = Array.from(crypto.randomBytes(16), (b) => abc[b % abc.length]).join('');
+    await pool.query('UPDATE accounts SET pass = ?, salt = ? WHERE name = ?', [gameHash(next, salt), salt, req.user]);
     res.json({ ok: true });
   } catch (e) { console.error(e); res.status(500).json({ error: 'Ошибка сервера' }); }
 });
@@ -202,5 +224,10 @@ app.use(express.static(path.join(__dirname, 'public')));
     created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id), KEY owner (owner)
   ) ENGINE=InnoDB DEFAULT CHARSET=cp1251`);
+  // столбцы, которые добавляет гейммод (на случай, если сайт запущен раньше нового мода)
+  for (const [t, c, def] of [['audio_tracks', 'artist', "VARCHAR(48) NOT NULL DEFAULT ''"], ['accounts', 'audio', 'TINYINT NOT NULL DEFAULT 0']]) {
+    const [x] = await pool.query('SELECT COUNT(*) c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?', [t, c]);
+    if (!x[0].c) { await pool.query(`ALTER TABLE \`${t}\` ADD COLUMN \`${c}\` ${def}`); console.log(`Добавлен столбец ${t}.${c}`); }
+  }
   app.listen(cfg.port, () => console.log('Capt audio site: порт ' + cfg.port));
 })().catch((e) => { console.error('Не удалось подключиться к MySQL:', e.message); process.exit(1); });
